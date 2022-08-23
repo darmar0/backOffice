@@ -1,8 +1,9 @@
-import { useState} from "react"
+import { useState, useContext} from "react"
 import FormInput from "../form-input/form-input.component"
 import {signInUserWithEmailAndPassword, signInWidthGooglePopup} from "../../utils/firebase/firebase.utils"
 import Button from "../button/button.component"
 import "./sign-in.styles.scss"
+import { UserContext } from "../../contexts/user.context"
 
 const defaultFormFieds = {
     email: '',
@@ -15,6 +16,8 @@ const SignIn = () => {
   const [formFields, setFormFields] = useState(defaultFormFieds);
   const {email, password} = formFields;
 
+  const {setCurretntUser} = useContext(UserContext)
+
 
 const handleChange = (event) => {
     const {name, value} = event.target;
@@ -25,6 +28,7 @@ const resetFormFields = () => {
 }
 const signInWidthGooge = async () => {
     const res = await signInWidthGooglePopup();
+    setCurretntUser(res);
     // const userDocRef = await createUserDocFromAuth(res.user);// MOVED TO CONTEXT
 }
 const handeleSubmit = async(event) => {
@@ -32,6 +36,7 @@ const handeleSubmit = async(event) => {
 
         try{
             const {user} = await signInUserWithEmailAndPassword(email, password);
+            setCurretntUser(user);
             resetFormFields();
            }catch(error){
             switch(error.code){
